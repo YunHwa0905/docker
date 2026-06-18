@@ -1,4 +1,122 @@
-# Docker DLI
+# Docker Study
+
+Docker 기초 문법 및 컨테이너 운영을 단계별로 학습한 실습 저장소입니다.
+
+---
+
+## 기술 스택
+
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
+![OpenJDK](https://img.shields.io/badge/OpenJDK_17-007396?style=flat&logo=openjdk&logoColor=white)
+
+---
+
+## 프로젝트 구조
+
+```
+docker/
+├── readme.MD              # Docker CLI 전체 명령어 정리 (이미지·컨테이너·네트워크·볼륨)
+│
+├── lec1/
+│   └── Dockerfile         # FROM — 베이스 이미지로 이미지 생성
+│
+├── lec2/
+│   └── Dockerfile         # ADD — 압축파일·URL·파일 패턴 추가
+│
+├── lec3/
+│   └── Dockerfile         # RUN·CMD·EXPOSE — nginx 설치 및 포트 설정
+│
+├── lec4/
+│   └── Dockerfile         # WORKDIR·COPY — 작업 디렉토리 지정 및 소스 복사
+│
+├── lec5/
+│   └── Dockerfile         # LABEL·ARG — 이미지 메타데이터 및 빌드 변수
+│
+└── lec6/
+    └── Dockerfile         # VOLUME — 볼륨·바인드 마운트 설정
+```
+
+---
+
+## 실행 방법
+
+각 lec 폴더의 Dockerfile을 독립적으로 빌드하여 실습합니다.
+
+```bash
+# 이미지 빌드 예시 (lec3 — nginx)
+docker build -t test_ub:3.0 ./lec3
+
+# 컨테이너 생성 및 가동
+docker run -d -p 80:80 --name test_ub30 test_ub:3.0
+
+# 브라우저에서 확인
+# http://localhost
+```
+
+```bash
+# lec4 — WORKDIR·COPY 실습
+docker build -t test_ub:4.0 ./lec4
+docker run -it --name test_ub40 test_ub:4.0
+# 컨테이너 내부 파일 구조 확인
+# ls /home/ubuntu/app -al
+```
+
+```bash
+# lec6 — VOLUME 실습 (nginx + 볼륨 마운트)
+docker build -t test_ub:6.0 ./lec6
+docker run -itd -p 80:80 --name test_ub60 test_ub:6.0
+```
+
+> `readme.MD`의 CLI 명령어를 순서대로 따라가며 이미지·컨테이너·네트워크·볼륨을 함께 실습합니다.
+
+---
+
+## 학습 내용
+
+| 폴더 / 파일 | 주요 학습 내용 |
+|------------|---------------|
+| `readme.MD` | docker version·info·df, 이미지 pull·push·tag·inspect·rm, 컨테이너 run·exec·logs·ls, 네트워크 create·connect·disconnect, 볼륨 마운트·바인드 마운트 |
+| `lec1` | `FROM` — 베이스 이미지 지정, `docker build` 기본 흐름 |
+| `lec2` | `ADD` — 압축 파일 자동 해제, URL 다운로드, 와일드카드 패턴(`*`, `?`) 파일 추가 |
+| `lec3` | `RUN` — 패키지 설치, `EXPOSE` — 포트 선언, `CMD` — 컨테이너 기동 명령 |
+| `lec4` | `WORKDIR` — 작업 디렉토리 설정, `COPY` — 소스·리소스를 이미지 내 특정 위치에 복사 |
+| `lec5` | `ARG` — 빌드 타임 변수, `LABEL` — 이미지 메타데이터(`docker image inspect`로 확인) |
+| `lec6` | `VOLUME` — 볼륨 마운트·바인드 마운트 경로 선언, nginx 설정 파일 외부 제어 |
+
+---
+
+## 개발 환경
+
+- **Docker Desktop** — [다운로드](https://www.docker.com/products/docker-desktop/)
+- **Windows 11** + PowerShell / WSL2
+
+```bash
+# MySQL 컨테이너 실행
+docker run -d -p 3306:3306 --name my_mysql \
+  --env MYSQL_USER=dev \
+  --env MYSQL_PASSWORD=1234 \
+  --env MYSQL_ROOT_PASSWORD=1234 \
+  mysql
+```
+
+```bash
+# 3-tier 네트워크 구성 예시 (web — was — db)
+docker network create --driver=bridge web
+docker network create --driver=bridge was
+docker network connect web <nginx-container>
+docker network connect was <springboot-container>
+docker network connect was <mysql-container>
+```
+
+---
+
+## Docker CLI 명령어 노트
+
+> 상세 실습 명령어는 [readme.MD](readme.MD)를 참고하세요.
+
 ## 도커 기본 명령어, 이미지
 ```
 # 1. 도커 버전 확인, 설치 확인
